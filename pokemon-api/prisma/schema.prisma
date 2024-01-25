@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Pokemon {
+  id        Int     @id
+  name      String
+  sprites   Sprites @relation(fields: [spritesId], references: [id])
+  spritesId Int
+  types     Types[]
+  typesId   Int
+  team      Team[]
+}
+
+model Sprites {
+  id                 Int              @id @default(autoincrement())
+  front_default      String
+  front_female       String?
+  front_shiny        String?
+  front_shiny_female String?
+  back_default       String?
+  back_female        String?
+  back_shiny         String?
+  back_shiny_female  String?
+  pokemon            Pokemon[]
+  PokemonDetails     PokemonDetails[]
+}
+
+model Types {
+  id             Int              @id @default(autoincrement())
+  type           Type             @relation(fields: [typeId], references: [id])
+  typeId         Int
+  slot           Int
+  pokemon        Pokemon[]
+  PokemonDetails PokemonDetails[]
+}
+
+model Type {
+  id    Int     @id @default(autoincrement())
+  name  String
+  types Types[]
+}
+
+model PokemonDetails {
+  id        Int         @id @default(autoincrement())
+  name      String
+  sprites   Sprites     @relation(fields: [spritesId], references: [id])
+  spritesId Int
+  types     Types[]
+  typesId   Int
+  height    Decimal
+  weight    Decimal
+  moves     Moves[]
+  order     Int
+  species   String
+  stats     Stats[]
+  abilities Abilities[]
+  form      String
+}
+
+model Moves {
+  id                    Int                     @id @default(autoincrement())
+  move                  String
+  pokemonDetails        PokemonDetails[]
+  version_group_details version_group_details[]
+}
+
+model version_group_details {
+  id                Int     @id @default(autoincrement())
+  move_learn_method String
+  version_group     String
+  level_learned_at  Int
+  moves             Moves[]
+}
+
+model Stats {
+  id             Int              @id @default(autoincrement())
+  stat           String
+  base_stat      Int
+  effort         Int
+  pokemonDetails PokemonDetails[]
+}
+
+model Abilities {
+  id             Int              @id @default(autoincrement())
+  ability        String
+  is_hidden      Boolean
+  slot           Int
+  pokemonDetails PokemonDetails[]
+}
+
+model Team {
+  id        Int       @id @default(autoincrement())
+  name      String
+  pokemons  Pokemon[]
+  pokemonId Int
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  password   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Error {
+  id            Int    @id @default(autoincrement())
+  error         String
+  error_message String
+}
