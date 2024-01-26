@@ -98,7 +98,6 @@ model Team {
   id        Int       @id @default(autoincrement())
   name      String
   pokemons  Pokemon[]
-  pokemonId Int
 }
 
 model User {
