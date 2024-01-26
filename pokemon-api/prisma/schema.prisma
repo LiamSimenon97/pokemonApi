@@ -11,12 +11,11 @@ datasource db {
 }
 
 model Pokemon {
-  id        Int     @id
-  name      String
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
   sprites   Sprites @relation(fields: [spritesId], references: [id])
   spritesId Int
   types     Types[]
-  typesId   Int
   team      Team[]
 }
 
@@ -36,8 +35,7 @@ model Sprites {
 
 model Types {
   id             Int              @id @default(autoincrement())
-  type           Type             @relation(fields: [typeId], references: [id])
-  typeId         Int
+  type           Type[]            
   slot           Int
   pokemon        Pokemon[]
   PokemonDetails PokemonDetails[]
@@ -45,7 +43,7 @@ model Types {
 
 model Type {
   id    Int     @id @default(autoincrement())
-  name  String
+  name  String  @unique
   types Types[]
 }
 
@@ -55,7 +53,6 @@ model PokemonDetails {
   sprites   Sprites     @relation(fields: [spritesId], references: [id])
   spritesId Int
   types     Types[]
-  typesId   Int
   height    Decimal
   weight    Decimal
   moves     Moves[]
@@ -68,7 +65,7 @@ model PokemonDetails {
 
 model Moves {
   id                    Int                     @id @default(autoincrement())
-  move                  String
+  move                  String                  
   pokemonDetails        PokemonDetails[]
   version_group_details version_group_details[]
 }
@@ -91,7 +88,7 @@ model Stats {
 
 model Abilities {
   id             Int              @id @default(autoincrement())
-  ability        String
+  ability        String 
   is_hidden      Boolean
   slot           Int
   pokemonDetails PokemonDetails[]
@@ -115,6 +112,6 @@ model User {
 
 model Error {
   id            Int    @id @default(autoincrement())
-  error         String
-  error_message String
+  error         String @unique
+  error_message String 
 }
