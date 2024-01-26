@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { Pokemon, PokemonDetails, Sprites, Type, Types } from '@prisma/client';
 import { promises as fs } from 'fs';
 
 Main();

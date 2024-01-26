@@ -1,14 +1,19 @@
-import { Controller, Post } from '@nestjs/common';
-import { PokemonService } from './pokemon.service';
-import { promises as fs } from 'fs';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { PokemonService, Sort } from './pokemon.service';
 
-@Controller('pokemon')
+@Controller("api/v1")
 export class PokemonController {
     constructor(private pokemonService: PokemonService) {}
-    @Post('seed')
-    async seed() {
-            const file = await fs.readFile(process.cwd() + '/prisma/pokemons.json', 'utf8');
-            const data = JSON.parse(file);
-            console.log(data);
+    
+    @Get("pokemons")
+    getAllPokemons(@Body('sort') sort: Sort ) {
+        return this.pokemonService.getAllPokemons(sort);
     }
+
+    @Get("pokemon")
+    getPokemonById(@Body('id') id:number){
+        if(id === undefined) return "Please provide an id";
+        return this.pokemonService.getPokemonById(id);
+    }
+
 }
