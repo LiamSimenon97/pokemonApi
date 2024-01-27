@@ -10,12 +10,12 @@ export class PokemonDetailsDto {
   @ApiProperty()
   name: string;
   @ApiProperty({
-    type: 'number',
+    type: 'integer',
     format: 'double',
   })
   height: Prisma.Decimal;
   @ApiProperty({
-    type: 'number',
+    type: 'integer',
     format: 'double',
   })
   weight: Prisma.Decimal;
