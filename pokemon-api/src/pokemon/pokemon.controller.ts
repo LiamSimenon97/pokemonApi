@@ -1,10 +1,7 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, Res, Version } from '@nestjs/common';
 import { PokemonService, Sort } from './pokemon.service';
 
-@Controller({
-    version: '1',
-}
-)
+@Controller()
 export class PokemonController {
     constructor(private pokemonService: PokemonService) {}
     @Get("pokemons")
@@ -33,6 +30,4 @@ export class PokemonController {
         const { sort,limit,offset } = req.query;
         const pokemons = this.pokemonService.getPokemonsPaginated(Number(limit),sort,Number(offset));
     }
-
-
 }
