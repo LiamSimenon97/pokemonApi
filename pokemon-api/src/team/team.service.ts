@@ -70,7 +70,7 @@ export class TeamService {
         if(!pokemonsInTeam) throw new NotFoundException(`Team with id ${teamId} not found`);
         if(pokemonsInTeam.length + pokemonsIds.length > 6) throw new ForbiddenException("A team can't have more than 6 pokemons");
 
-        const team = this.prisma.team.update({
+        const team = await this.prisma.team.update({
             where: {
                 id: teamId
             },
@@ -103,8 +103,8 @@ export class TeamService {
     //@param id The id of the team
     //@returns The deleted team
     //@throws NotFoundException if the team doesn't exist
-    deleteTeam(id:number) {
-        const team = this.prisma.team.delete({
+    async deleteTeam(id:number) {
+        const team = await this.prisma.team.delete({
             where: {
                 id: id
             }
@@ -112,9 +112,20 @@ export class TeamService {
         if(!team) throw new NotFoundException(`Team with id ${id} not found`);
         return team;
     }
-
-    removePokemonFromTeam(teamId:number, pokemonsIds:number[]) {
-        const team = this.prisma.team.update({
+    //Remove pokemons from a team
+    //@param teamId The id of the team
+    //@param pokemonsIds The ids of the pokemons to remove from the team
+    //@returns The updated team
+    //@throws NotFoundException if the team doesn't exist
+    //@throws NotFoundException if the pokemon(s) are not in the team
+    async removePokemonFromTeam(teamId:number, pokemonsIds:number[]) {
+        //Check if the pokemons are in the team
+        const pokemonsInTeam = await this.getTeamById(teamId).then(team => team.pokemons);
+        if(!pokemonsInTeam) throw new NotFoundException(`Team with id ${teamId} not found`);
+        const pokemonsIdsInTeam = pokemonsInTeam.map(pokemon => pokemon.id);
+        const pokemonsIdsNotInTeam = pokemonsIds.filter(id => !pokemonsIdsInTeam.includes(id));
+        if(pokemonsIdsNotInTeam.length > 0) throw new NotFoundException(`The pokemon(s) with id(s) ${pokemonsIdsNotInTeam} are not in the team`);
+        const team = await this.prisma.team.update({
             where: {
                 id: teamId
             },
@@ -143,8 +154,12 @@ export class TeamService {
         if(!team) throw new NotFoundException(`Team with id ${teamId} not found`);
         return team;
     }
-    removeAllPokemonFromTeam(teamId:number) {
-        const team = this.prisma.team.update({
+    //Remove all pokemons from a team
+    //@param teamId The id of the team
+    //@returns The updated team
+    //@throws NotFoundException if the team doesn't exist
+    async removeAllPokemonFromTeam(teamId:number) {
+        const team = await this.prisma.team.update({
             where: {
                 id: teamId
             },
