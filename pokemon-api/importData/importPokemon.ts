@@ -8,121 +8,89 @@ export async function importData(nameOrId:string): Promise<void> {
  
   try {
     const response = await axios.get(url);
- 
-    // Process the response and import data into your Nest.js application
     const data = response.data;
-    console.log(data);
-    // Your import logic here
-    const pokemonToCreate = await prisma.pokemon.upsert({
-      where: { name: data.name },
-      update: {},
-      create: {
-        name: data.name,
-        sprites: {
-          create: {
-            front_default: data.sprites.front_default,
+    data.forEach(async (data) => {
+      const pokemonToCreate = await prisma.pokemon.create({
+        data: {
+          name: data.name,
+          sprites: {
+            create: {
+              front_default: data.sprites.front_default,
+            },
           },
-        },
-        types: {
-          create: [
-            {
-              slot: data.types[0].slot,
+          types: {
+            create: data.types.map((typeData) => ({
+              slot: typeData.slot,
               type: {
-                connectOrCreate: {
-                  where: {
-                    name: data.types[0].type.name,
-                  },
-                  create: {
-                    name: data.types[0].type.name,
-                  },
+                create: {
+                  name: typeData.type.name,
                 },
               },
-            },
-          ],
-        },
-      },
-    });
-    const pokemonDetails = await prisma.pokemonDetails.create({
-      data: {
-        name: data.name,
-        sprites: {
-          create: {
-            front_default: data.sprites.front_default,
-            front_female: data.sprites.front_female,
-            front_shiny: data.sprites.front_shiny,
-            front_shiny_female: data.sprites.front_shiny_female,
-            back_default: data.sprites.back_default,
-            back_female: data.sprites.back_female,
-            back_shiny: data.sprites.back_shiny,
-            back_shiny_female: data.sprites.back_shiny_female,
+            })),
           },
         },
-        types: {
-          create: [
-            {
-              slot: data.types[0].slot,
+      }).catch((err) => {
+        console.log(err);
+      });
+      const pokemonDetails = await prisma.pokemonDetails.create({
+        data: {
+          name: data.name,
+          sprites: {
+            create: {
+              front_default: data.sprites.front_default,
+              front_female: data.sprites.front_female,
+              front_shiny: data.sprites.front_shiny,
+              front_shiny_female: data.sprites.front_shiny_female,
+              back_default: data.sprites.back_default,
+              back_female: data.sprites.back_female,
+              back_shiny: data.sprites.back_shiny,
+              back_shiny_female: data.sprites.back_shiny_female,
+            },
+          },
+          types: {
+            create: data.types.map((typeData) => ({
+              slot: typeData.slot,
               type: {
-                connectOrCreate: {
-                  where: {
-                    name: data.types[0].type.name,
-                  },
-                  create: {
-                    name: data.types[0].type.name,
-                  },
+                create: {
+                  name: typeData.type.name,
                 },
               },
-            },
-          ],
-        },
-        height: data.height,
-        weight: data.weight,
-        moves: {
-          create: [
-            {
-              move: data.moves[0].move.name,
+            })),
+          },
+          height: data.height,
+          weight: data.weight,
+          moves: {
+            create: data.moves.map((moveData) => ({
+              move: moveData.move.name,
               version_group_details: {
-                create: [
-                  {
-                    level_learned_at:
-                      data.moves[0].version_group_details[0].level_learned_at,
-                    move_learn_method:
-                      data.moves[0].version_group_details[0].move_learn_method
-                        .name,
-                    version_group:
-                      data.moves[0].version_group_details[0].version_group.name,
-                  },
-                ],
+                create: moveData.version_group_details.map((versionGroupDetailData) => ({
+                  level_learned_at: versionGroupDetailData.level_learned_at,
+                  move_learn_method: versionGroupDetailData.move_learn_method.name,
+                  version_group: versionGroupDetailData.version_group.name,
+                })),
               },
-            },
-          ],
+            })),
+          },
+          order: data.order,
+          species: data.species.name,
+          stats: {
+            create: data.stats.map((statData) => ({
+              base_stat: statData.base_stat,
+              effort: statData.effort,
+              stat: statData.stat.name,
+            })),
+          },
+          abilities: {
+            create: data.abilities.map((abilityData) => ({
+              ability: abilityData.ability.name,
+              is_hidden: abilityData.is_hidden,
+              slot: abilityData.slot,
+            })),
+          },
+          form: data.forms[0].name,
         },
-        order: data.order,
-        species: data.species.name,
-        stats: {
-          create: [
-            {
-              base_stat: data.stats[0].base_stat,
-              effort: data.stats[0].effort,
-              stat: data.stats[0].stat.name,
-            },
-          ],
-        },
-        abilities: {
-          create: [
-            {
-              ability: data.abilities[0].ability.name,
-              is_hidden: data.abilities[0].is_hidden,
-              slot: data.abilities[0].slot,
-            },
-          ],
-        },
-        form: data.forms[0].name,
-      },
+      });
     });
-    console.log(pokemonToCreate);
-    console.log(pokemonDetails);
-    
-    console.log('Data imported successfully.');
   } catch (error) {
     console.error('Error fetching data:', error.message);
   }

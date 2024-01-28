@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
+import { Decimal } from '@prisma/client/runtime/library';
 
 export class PokemonDetailsDto {
   @ApiProperty({
@@ -13,12 +14,12 @@ export class PokemonDetailsDto {
     type: 'integer',
     format: 'double',
   })
-  height: Prisma.Decimal;
+  height: Decimal
   @ApiProperty({
     type: 'integer',
     format: 'double',
   })
-  weight: Prisma.Decimal;
+  weight: Decimal;
   @ApiProperty({
     type: 'integer',
     format: 'int32',
