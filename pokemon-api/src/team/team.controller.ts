@@ -1,11 +1,11 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { TeamService } from './team.service';
-import { ApiBody, ApiCreatedResponse, ApiExtraModels, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiParam, ApiTags, getSchemaPath } from '@nestjs/swagger';
+import { ApiBody, ApiCreatedResponse, ApiExtraModels, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import { ErrorDto } from 'src/components/schemas/ErrorDto';
 import { TeamDto } from 'src/components/schemas/TeamDto';
 
 @Controller()
-@ApiTags('Team')
+@ApiTags('Teams')
 @ApiExtraModels(ErrorDto)
 @ApiExtraModels(TeamDto)
 export class TeamController {
@@ -16,6 +16,8 @@ export class TeamController {
     //@returns The created team
     @ApiTags('Teams')
     @ApiCreatedResponse({description: 'Successful operation', schema: {type:"object",$ref: getSchemaPath(TeamDto)}})
+    @ApiBody({description: "Name of the team", required:true,schema: {type: 'object',properties : {name: {type: 'string'}}}})
+    @ApiOperation({summary: 'Create a team'})
     @Post("team")
     async createTeam(@Body('name') name:string) {
         return this.teamService.createTeam(name);
@@ -23,6 +25,7 @@ export class TeamController {
     //Get all teams
     //@returns All teams
     @ApiOkResponse({description: 'Successful operation', schema: {type: 'array', items: {$ref: getSchemaPath(TeamDto)}}})
+    @ApiOperation({summary: 'Get all teams'})
     @Get("teams")
     async getAllTeams() {
         return this.teamService.getAllTeams();
@@ -34,6 +37,7 @@ export class TeamController {
     @ApiParam({name: 'id',required: true, description: 'The id of the team to retrieve', schema: {type: 'integer',format: 'int64'}})
     @ApiOkResponse({description: 'Successful operation', schema: {$ref: getSchemaPath(TeamDto)}})
     @ApiNotFoundResponse({description: 'Team not found',schema: {$ref: getSchemaPath(ErrorDto)}})
+    @ApiOperation({summary: 'Get a team by id'})
     @Get("teams/:id")
     async getTeamById(@Param('id',new ParseIntPipe()) id:number) {
         return this.teamService.getTeamById(id);
@@ -50,6 +54,7 @@ export class TeamController {
     @ApiForbiddenResponse({description: 'Team is full (Limit is 6)',schema: {$ref: getSchemaPath(ErrorDto)}})
     @ApiExtraModels(ErrorDto)
     @ApiExtraModels(TeamDto)
+    @ApiOperation({summary: 'Set pokemon(s) of a team'})
     @Post("teams/:id")
     async setPokemonToTeam(@Param('id',new ParseIntPipe()) teamId:number, @Body('pokemonsIds') pokemonsIds:number[]) {
         return this.teamService.setPokemonToTeam(teamId, pokemonsIds);
@@ -61,6 +66,7 @@ export class TeamController {
     @ApiParam({name: 'id',required: true, description: 'The id of the team to delete', schema: {type: 'integer',format: 'int64'}})
     @ApiOkResponse({description: 'Successful operation', schema: {$ref: getSchemaPath(TeamDto)}})
     @ApiNotFoundResponse({description: 'Team not found',schema: {$ref: getSchemaPath(ErrorDto)}})
+    @ApiOperation({summary: 'Delete a team by id'})
     @Delete("team/:id")
     async deleteTeam(@Param('id',new ParseIntPipe()) id:number) {
         return this.teamService.deleteTeam(id);
@@ -74,6 +80,8 @@ export class TeamController {
     @ApiBody({description: "Array of pokemon id's to delete", required:true,schema: {type: 'object',properties : {pokemons: {type: 'array',items: {type: 'integer'}}}}})
     @ApiOkResponse({description: 'Successful operation', schema: {$ref: getSchemaPath(TeamDto)}})
     @ApiNotFoundResponse({description: 'Team not found',schema: {$ref: getSchemaPath(ErrorDto)}})
+    @ApiNotFoundResponse({description: 'Pokemon not inside the existing team',schema: {$ref: getSchemaPath(ErrorDto)}})
+    @ApiOperation({summary: 'Delete pokemon(s) from a team'})
     @Delete("team/pokemon/:id")
     async removePokemonFromTeam(@Param('id',new ParseIntPipe()) teamId:number, @Body('pokemonsIds') pokemonsIds?:number[]) {
         if(pokemonsIds === undefined) return this.teamService.removeAllPokemonFromTeam(teamId);
