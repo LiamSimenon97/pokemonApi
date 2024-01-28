@@ -8,18 +8,18 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=pokemon
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   command: /bin/sh -c "npx prisma migrate deploy && npx prisma generate && npx prisma db seed && npm start"
-  #   container_name: pokemonApi
-  #   environment:
-  #     - PORT=3000
-  #     - DATABASE_URL=postgresql://postgres:postgres@db:5432/pokemon
-  #   ports:
-  #     - '3000:3000'
-  #   depends_on:
-  #     - db
-  #   volumes:
-  #     - ./src:/app/src
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /bin/sh -c "npx prisma migrate deploy && npx prisma generate && npm start"
+    container_name: pokemonApi
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/pokemon
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    volumes:
+      - ./src:/app/src
