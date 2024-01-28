@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, Res, SetMetadata, Version } from '@nestjs/common';
 import { PokemonService, Sort } from './pokemon.service';
 import { ApiAcceptedResponse, ApiExtraModels, ApiNotFoundResponse, ApiOkResponse, ApiParam, ApiQuery, ApiTags, getSchemaPath } from '@nestjs/swagger';
-import { PokemonDto } from 'src/components/schemas/PokemonDto';
-import { ErrorDto } from 'src/components/schemas/ErrorDto';
-import { PokemonDetailsDto } from 'src/components/schemas/PokemonDetailsDto';
+import { PokemonDto } from '../../src/components/schemas/PokemonDto';
+import { ErrorDto } from '../../src/components/schemas/ErrorDto';
+import { PokemonDetailsDto } from '../../src/components/schemas/PokemonDetailsDto';
 
 @Controller()
 @ApiTags('Pokemon')
@@ -12,6 +12,9 @@ import { PokemonDetailsDto } from 'src/components/schemas/PokemonDetailsDto';
 @ApiExtraModels(PokemonDetailsDto)
 export class PokemonController {
     constructor(private pokemonService: PokemonService) {}
+
+    //Get all pokemons
+    //@returns All pokemons
     @ApiQuery({name: 'sort',required: false, description: 'Sort the pokemons', schema: {type: 'string',enum : ['name-asc','name-desc','id-asc','id-desc']}})
     @ApiOkResponse({description: 'Successful operation', schema: {type: 'array', items: {$ref: getSchemaPath(PokemonDto)}}})
     @Get("pokemons")
@@ -19,6 +22,10 @@ export class PokemonController {
         const { sort } = req.query;
         return this.pokemonService.getAllPokemons(sort);
     }
+    //Get a pokemon by id
+    //@param id The id of the pokemon
+    //@returns The pokemon with the given id
+    //@throws NotFoundException if the pokemon doesn't exist
     @ApiParam({name: 'id',required: true, description: 'The id of the pokemon to retrieve', schema: {type: 'integer',format: 'int64'}})
     @ApiOkResponse({description: 'Successful operation', schema: {$ref: getSchemaPath(PokemonDetailsDto)}})
     @ApiNotFoundResponse({description: 'Pokemon not found',schema: {$ref: getSchemaPath(ErrorDto)}})
@@ -28,10 +35,12 @@ export class PokemonController {
         return this.pokemonService.getPokemonById(id);
     }
 
-    //Get a pokemon by name
-    //@param name The name of the pokemon
+    //Get pokemon(s) by name or type
+    //@req The name or type of the pokemon
+    //@req the limit of the results
     //@returns The pokemon with the given name
     //@throws NotFoundException if the pokemon doesn't exist
+    @ApiTags("Search")
     @ApiQuery({name: 'query',required: true, description: 'Name or Type of the pokemon', schema: {type: 'string'}})
     @ApiQuery({name: 'limit',required: false, description: 'Limit the number of results', schema: {type: 'integer',format: 'int64'}})
     @ApiOkResponse({description: 'Successful operation', schema: {type: 'array', items: {$ref: getSchemaPath(PokemonDto)}}})
@@ -44,6 +53,11 @@ export class PokemonController {
             return this.pokemonService.getPokemonByType(type,Number(limit))
         }
     }
+    // get all pokemons paginated
+    // @param limit The number of pokemons per page
+    // @param sort The sorting criteria
+    // @param offset The offset
+    // @returns The pokemons paginated
     @Version('2')
     @ApiQuery({name: 'sort',required: false, description: 'Sort the pokemons', schema: {type: 'string',enum : ['name-asc','name-desc','id-asc','id-desc']}})
     @ApiQuery({name: 'limit',required: false, description: 'Limit the number of pokemons', schema: {type: 'integer',format: 'int32'}})

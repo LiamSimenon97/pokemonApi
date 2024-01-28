@@ -1,14 +1,13 @@
-// importData.command.ts
 import * as yargs from 'yargs';
 import { importData } from './importPokemon';
  
 yargs
   .command({
     command: 'import-data',
-    describe: 'Import data from an external API',
+    describe: 'Import pokemon data from an external API',
     builder: {
       nameOrId: {
-        describe: 'Name of the data to import',
+        describe: 'Name or id of the pokemon to import',
         demandOption: true,
         type: 'string',
       }

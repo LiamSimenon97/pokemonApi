@@ -1,13 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { off } from 'process';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../src/prisma/prisma.service';
 
 @Injectable()
 export class PokemonService {
     constructor(private prisma:PrismaService) {}
     //Get all pokemons
     //@returns All pokemons
-    getAllPokemons(sort?:Sort) {
+    getAllPokemons(sort?:Sort){
         return this.prisma.pokemon.findMany({
             orderBy: {
                 name: sort === Sort.NAME_ASC ? 'asc' : sort === Sort.NAME_DESC ? 'desc' : undefined,

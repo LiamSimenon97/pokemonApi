@@ -3,11 +3,10 @@ import { ApiProperty } from '@nestjs/swagger';
 export class ErrorDto {
   @ApiProperty({
     type: 'integer',
-    format: 'int64',
   })
   id: number;
-  @ApiProperty()
+  @ApiProperty({type:"string"})
   error: string;
-  @ApiProperty()
+  @ApiProperty({type:"string"})
   error_message: string;
 }

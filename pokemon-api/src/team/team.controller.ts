@@ -14,6 +14,7 @@ export class TeamController {
     //Create a team
     //@param name The name of the team
     //@returns The created team
+    @ApiTags('Teams')
     @ApiCreatedResponse({description: 'Successful operation', schema: {type:"object",$ref: getSchemaPath(TeamDto)}})
     @Post("team")
     async createTeam(@Body('name') name:string) {
@@ -33,11 +34,11 @@ export class TeamController {
     @ApiParam({name: 'id',required: true, description: 'The id of the team to retrieve', schema: {type: 'integer',format: 'int64'}})
     @ApiOkResponse({description: 'Successful operation', schema: {$ref: getSchemaPath(TeamDto)}})
     @ApiNotFoundResponse({description: 'Team not found',schema: {$ref: getSchemaPath(ErrorDto)}})
-    @Get("team/:id")
+    @Get("teams/:id")
     async getTeamById(@Param('id',new ParseIntPipe()) id:number) {
         return this.teamService.getTeamById(id);
     }
-    //Get a team by name
+    //Set pokemon(s) to a team
     //@param name The name of the team
     //@returns The team with the given name
     //@throws NotFoundException if the team doesn't exist
@@ -49,7 +50,7 @@ export class TeamController {
     @ApiForbiddenResponse({description: 'Team is full (Limit is 6)',schema: {$ref: getSchemaPath(ErrorDto)}})
     @ApiExtraModels(ErrorDto)
     @ApiExtraModels(TeamDto)
-    @Post("team/pokemon/:id")
+    @Post("teams/:id")
     async setPokemonToTeam(@Param('id',new ParseIntPipe()) teamId:number, @Body('pokemonsIds') pokemonsIds:number[]) {
         return this.teamService.setPokemonToTeam(teamId, pokemonsIds);
     }

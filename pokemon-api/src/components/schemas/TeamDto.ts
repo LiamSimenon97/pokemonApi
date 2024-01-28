@@ -8,4 +8,6 @@ export class TeamDto {
   id: number;
   @ApiProperty()
   name: string;
+  @ApiProperty()
+  pokemons: string[];
 }

@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { Decimal } from '@prisma/client/runtime/library';
+import { types } from 'util';
 
 export class PokemonDetailsDto {
   @ApiProperty({
@@ -15,6 +16,8 @@ export class PokemonDetailsDto {
     format: 'double',
   })
   height: Decimal
+  @ApiProperty()
+  types : string[];
   @ApiProperty({
     type: 'integer',
     format: 'double',
@@ -29,4 +32,10 @@ export class PokemonDetailsDto {
   species: string;
   @ApiProperty()
   form: string;
+  @ApiProperty()
+  moves: string[];
+  @ApiProperty()
+  sprites: string;
+  @ApiProperty()
+  abilities: string[];
 }

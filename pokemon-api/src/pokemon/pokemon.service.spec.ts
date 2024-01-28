@@ -8,7 +8,6 @@ describe('PokemonService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [PokemonService],
     }).compile();
-
     service = module.get<PokemonService>(PokemonService);
   });
 
