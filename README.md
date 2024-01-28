@@ -6,19 +6,34 @@ This is a pokemon api
 DATABASE_URL="postgresql://postgres:postgres@localhost:5003/pokemon?connection_limit=5&pool_timeout=0"
 ```
 
-- First install all packages with the command : npm i;
-- run the command: docker compose up
-- After this type command: npx prisma migrate deploy && npx prisma generate && npx prisma db seed 
+- First install all packages with the command:
+```bash
+npm i
+```
+- run the command:
+```bash
+docker compose up
+```
+- After this type command:
+```bash
+npx prisma migrate deploy && npx prisma generate && npx prisma db seed
+```
 
 Everything is setup
 
 ## Start application 
 
-- to start the application type command : npm start or npm run start:dev
-- to import files from the external api type command : npx ts-node importData/importPokemon.command.ts import-data --nameOrId="303"
+- to start the application type command:
+```bash
+ npm start or npm run start:dev
+```
+- to import files from the external api type command :
+```bash
+npx ts-node importData/importPokemon.command.ts import-data --nameOrId="303"
+```
 The 303 at the end can be the id or name of the pokemon you want to import 
 This will also save a image of the pokemon to a folder named importData/imagesSaved
-- For the team you will need a hardcode jwt token : 123456789123456789123456789
+- For the team you will need a hardcode jwt token to access it : 123456789123456789123456789
 
 ## Not finished/will not work
 - testing
